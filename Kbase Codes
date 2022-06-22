@@ -1,0 +1,56 @@
+# KBase code for FastQC
+
+from biokbase.narrative.jobs.appmanager import AppManager
+AppManager().run_app(
+    "kb_fastqc/runFastQC",
+    {
+        "input_file_ref": "04idSTLIB1727_S4_001.fastq"
+    },
+    tag="release",
+    version="1.2.0",
+    cell_id="a6532e08-21be-4da1-b72e-63f5c2c0c682",
+    run_id="10d72506-d308-48b1-a0dd-d0d6dfabe901"
+)
+
+# Kbase code for Kaiju
+
+from biokbase.narrative.jobs.appmanager import AppManager
+AppManager().run_app(
+    "kb_kaiju/run_kaiju",
+    {
+        "input_refs": ["116586/10/1"],
+        "tax_levels": ["ALL"],
+        "db_type": "nr_euk",
+        "filter_percent": 0.5,
+        "subsample_percent": 10,
+        "subsample_replicates": 1,
+        "subsample_seed": 1,
+        "seg_filter": "1",
+        "min_match_length": 11,
+        "greedy_run_mode": "1",
+        "greedy_allowed_mismatches": 5,
+        "greedy_min_match_score": 75,
+        "greedy_max_e_value": 0.05,
+        "sort_taxa_by": "totals"
+    },
+    tag="release",
+    version="1.1.6",
+    cell_id="84b9f5c2-0b16-41b6-bd4b-309863c5e769",
+    run_id="69c6fe0f-d197-4c51-a0a3-fa60ccf0d4aa"
+)
+
+# Kbase code for QUAST
+
+from biokbase.narrative.jobs.appmanager import AppManager
+AppManager().run_app(
+    "kb_quast/run_QUAST_app",
+    {
+        "assemblies": ["116586/20/1", "116586/14/1"],
+        "force_glimmer": 0
+    },
+    tag="release",
+    version="0.0.6",
+    cell_id="2dc9104d-f616-44df-ab53-932b5aad3831",
+    run_id="4f829dc1-6127-45b2-b201-0c851f38443e"
+)
+
