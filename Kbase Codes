@@ -53,4 +53,3 @@ AppManager().run_app(
     cell_id="2dc9104d-f616-44df-ab53-932b5aad3831",
     run_id="4f829dc1-6127-45b2-b201-0c851f38443e"
 )
-
