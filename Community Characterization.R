@@ -45,8 +45,7 @@ colnames(reads@tax_table@.Data)<- c("Kingdom", "Phylum", "Class",
                                     "Order", "Family", "Genus", 
                                     "Species")
 summary(reads@tax_table@.Data== "")
-reads_beta <- subset_taxa(reads, Genus != "")
-# remove blanks
+reads_beta <- subset_taxa(reads, Genus != "") # remove blanks
 summary(reads_beta@tax_table@.Data== "")
 otu_reads.df <- as.data.frame(otu_table(reads_beta))
 
@@ -55,15 +54,14 @@ otu_reads.df <- as.data.frame(otu_table(reads_beta))
 Cmin_reads <- min(colSums(otu_reads.df))
 Cmin_reads
 SRS.scaled.otu.reads<-SRS(otu_reads.df, Cmin=3861)
-#check that the normalization worked
+#check that normalization worked
 p.raw.curve.reads <- SRScurve(otu_reads.df, "shannon")
 p.SRS.curve.reads <-SRScurve(SRS.scaled.otu.reads, "shannon")
 p.raw.curve.reads                       
 p.SRS.curve.reads
 #make the scaled OTU dataframe into an otu_table for phyloseq
 scaled.otu.reads_table <- otu_table(SRS.scaled.otu.reads,taxa_are_rows=TRUE)
-#estimate richness & plot richness (chose what best answers the questions
-# you're asking)
+#estimate richness & plot richness with Shannon, Simpson, and Chao1
 SRS.diversity.reads<- estimate_richness(scaled.otu.reads_table, split=TRUE, 
                                         measures = c("Shannon", "Simpson",
                                                      "Chao1"))
@@ -72,7 +70,7 @@ SRS.diversity.full.reads <- SRS.diversity.reads[-c(2:5),]
 SRS.diversity.full.reads
 
 ## Taxonomic bar plots ##
-percentages_reads = transform_sample_counts(reads_beta, function(x) x*100/sum(x))
+percentages_reads = transform_sample_counts(reads_beta, function(x) x*100/sum(x)) # relative abundances calculated by taking percentages
 plotnames <- c("Anza Borrego","Bahamas", "CSharkBay", "NSharkBay", "SSharkBay")
 colnames(percentages_reads@otu_table@.Data)<- plotnames
 sample_names(percentages_reads) <- factor(sample_names(percentages_reads), levels = list(full = "Anza Borrego", Bahamas_megahit = "Bahamas",
@@ -86,15 +84,15 @@ glom_g_r <- tax_glom(percentages_reads, taxrank = 'Genus')
 reads.phyla <- psmelt(glom_p_r)
 reads.genus <- psmelt(glom_g_r)
 
-reads.phyla$Phylum[reads.phyla$Phylum == "Firmicutes_A"] <- "Firmicutes"
+reads.phyla$Phylum[reads.phyla$Phylum == "Firmicutes_A"] <- "Firmicutes" #combine phyla
 
 reads.genus$Genus[reads.genus$Genus == "PCC-7108"] <- "Anabaena"
 reads.genus$Genus[reads.genus$Genus == "Anabaena_A"] <- "Anabaena"
 reads.genus$Genus[reads.genus$Genus == "Nostoc_B"] <- "Nostoc"
-reads.genus$Genus[reads.genus$Genus == "Nostoc_C"] <- "Nostoc"
+reads.genus$Genus[reads.genus$Genus == "Nostoc_C"] <- "Nostoc" #combine genera
 
 reads.phyla$Phylum[reads.phyla$Abundance < 2] <- "Phyla < 2% abund."
-reads.genus$Genus[reads.genus$Abundance < 2] <- "Genera < 2% abund."
+reads.genus$Genus[reads.genus$Abundance < 2] <- "Genera < 2% abund." #set limit for percent abundance
 reads.phyla$Sample <- factor(reads.phyla$Sample, levels=plotnames)
 reads.genus$Sample <- factor(reads.genus$Sample, levels=plotnames)
 
@@ -114,13 +112,12 @@ reads.gen.plot
 # import biom file
 merged_metagenomes <- import_biom("full_beta.biom")
 merged_metagenomes@tax_table@.Data <- substring(merged_metagenomes@tax_table@.Data, 4)
-# may need to run line 116 twice -- check file for excess "_"
+# may need to run line 114 twice -- check file for excess "_"
 colnames(merged_metagenomes@tax_table@.Data)<- c("Kingdom", "Phylum", "Class", 
                                                  "Order", "Family", "Genus", 
                                                  "Species")
 summary(merged_metagenomes@tax_table@.Data== "")
-merged_metagenomes_beta <- subset_taxa(merged_metagenomes, Genus != "")
-# remove blanks
+merged_metagenomes_beta <- subset_taxa(merged_metagenomes, Genus != "") # remove blanks
 summary(merged_metagenomes_beta@tax_table@.Data== "")
 # see that the blanks have disappeared, counts are lower
 head(merged_metagenomes_beta@otu_table@.Data)
@@ -139,8 +136,7 @@ p.raw.curve
 p.SRS.curve
 #make the scaled OTU dataframe into an otu_table for phyloseq
 scaled.otu_table <- otu_table(SRS.scaled.otu,taxa_are_rows=TRUE)
-#estimate richness & plot richness (chose what best answers the questions
-# you're asking)
+#estimate richness & plot richness using Shannon, Simpson, and Chao1
 SRS.diversity<- estimate_richness(scaled.otu_table, split=TRUE, 
                                   measures = c("Shannon", "Simpson",
                                                "Chao1"))
@@ -151,7 +147,7 @@ SRS.diversity.full
 ## Taxonomic bar plots ##
 #convert abundances into percentages
 percentages = transform_sample_counts(merged_metagenomes_beta, function(x) x*100/sum(x))
-# relative abundances calculated by taking percentages (easier to compare)
+# relative abundances calculated by taking percentages
 head(percentages@otu_table@.Data)
 percentages_otu <- percentages@otu_table@.Data
 t(percentages_otu) #pivot table
@@ -170,12 +166,12 @@ glom_g <- tax_glom(percentages, taxrank = 'Genus')
 phyla <- psmelt(glom_p)
 genus <- psmelt(glom_g)
 
-phyla$Phylum[phyla$Phylum == "Firmicutes_A"] <- "Firmicutes"
+phyla$Phylum[phyla$Phylum == "Firmicutes_A"] <- "Firmicutes" #combine phyla
 
 genus$Genus[genus$Genus == "PCC-7108"] <- "Anabaena"
 genus$Genus[genus$Genus == "Anabaena_A"] <- "Anabaena"
 genus$Genus[genus$Genus == "Nostoc_B"] <- "Nostoc"
-genus$Genus[genus$Genus == "Nostoc_C"] <- "Nostoc"
+genus$Genus[genus$Genus == "Nostoc_C"] <- "Nostoc" #combine genera
 
 phyla$Phylum[phyla$Abundance < 2] <- "Phyla < 2% abund."
 genus$Genus[genus$Abundance < 2] <- "Genera < 2% abund."
@@ -219,7 +215,7 @@ gen.plot.az
 full_cyano <- filter(full_genus, Phylum == "Cyanobacteria" & Sample == "Anza Borrego")
 full_cyano$Genus[full_cyano$Genus == "Tolypothrix_B"] <- "Tolypothrix"
 full_cyano$Genus[full_cyano$Genus == "Tolypothrix_A"] <- "Tolypothrix"
-full_cyano$Genus[full_cyano$Genus == "Tolypothrix_C"] <- "Tolypothrix"
+full_cyano$Genus[full_cyano$Genus == "Tolypothrix_C"] <- "Tolypothrix" #combine genera
 full_cyano[order(full_cyano$Genus),]
 full_cyano_red <- full_cyano[-c(1,4:9)] #only sample, abundance, and genus
 STR_Cyanobacteria_Table <- gt(data = full_cyano_red[order(full_cyano_red$Genus),]) %>%
