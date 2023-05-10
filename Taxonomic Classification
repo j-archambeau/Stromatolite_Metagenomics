@@ -1,7 +1,27 @@
-Get scripts from Brad
+
+# run fastqc and multiqc
+ls *.fastq | parallel --gnu "fastqc {}" # * runs all files that end with .fastq
+multiqc .
 
 ### trimmomatic ###
+parallel --gnu "trimmomatic PE {1} {2} {1/.}_paired.fastq {1/.}_unpaired.fastq {2/.}_paired.fastq {2/.}_unpaired.fastq ILLUMINACLIP:TruSeq-PE.fa:2:30:10:8:true SLIDINGWINDOW:4:20" ::: *_1.fastq :::+ *_2.fastq
 
-### megahit ###
+# move trimmed paired files into new directory and move into directory
+# runrun fastqc and multiqc
+mkdir trimmed_paired_files
+mv *_paired.fastq.gz trimmed_paired_files
+cd /
+ls *.fastq | parallel --gnu "fastqc {}" # * runs all files that end with .fastq
+multiqc .
 
-### Kraken 2 ###
+### megahit - Run on each sample ###
+megahit -1 /path/to/Sample_1_paired.fastq -2 /path/to/Sample_2_paired.fastq -o /path/to/output_file
+
+### Kraken 2 - Run on each sample ###
+kraken2 --db /path/to/kraken_db --threads #ofCPU --classified-out /path/to/output_file --report /path/to/Sample.kreport /path/to/Sample_final.contigs.fa
+
+#run kraken-biom on individual samples and merged
+#individual
+kraken-biom /path/to/Sample.kreport --fmt json -o /path/to/Sample.biom
+#merged
+kraken-biom /path/to/Sample_1.kreport /path/to/Sample_2.kreport/ .. /path/to/Sample_n.kreport -fmt json -o /path/to/merged.biom
