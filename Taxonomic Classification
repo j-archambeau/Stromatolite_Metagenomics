@@ -1,3 +1,5 @@
+#Change directory to path with all .fastq files
+cd /sequences
 
 # run fastqc and multiqc
 ls *.fastq | parallel --gnu "fastqc {}" # * runs all files that end with .fastq
